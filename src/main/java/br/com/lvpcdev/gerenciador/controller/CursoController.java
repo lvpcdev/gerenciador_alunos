@@ -1,0 +1,28 @@
+package br.com.lvpcdev.gerenciador.controller;
+
+import br.com.lvpcdev.gerenciador.model.Curso;
+import br.com.lvpcdev.gerenciador.service.CursoService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/cursos")
+public class CursoController {
+
+    private final CursoService cursoService;
+
+    public CursoController(CursoService cursoService) {
+        this.cursoService = cursoService;
+    }
+
+    @PostMapping
+    public Curso cadastrarAluno(@RequestBody Curso curso) {
+        return cursoService.salvarCurso(curso);
+    }
+
+    @GetMapping
+    public List<Curso> listarCursos() {
+        return cursoService.listarTodos();
+    }
+}
