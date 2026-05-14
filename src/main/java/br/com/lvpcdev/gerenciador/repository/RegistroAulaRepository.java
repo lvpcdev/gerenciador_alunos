@@ -1,4 +1,9 @@
 package br.com.lvpcdev.gerenciador.repository;
 
-public class RegistroAulaRepository {
+import br.com.lvpcdev.gerenciador.model.RegistroAula;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface RegistroAulaRepository extends JpaRepository<RegistroAula, Long> {
 }
