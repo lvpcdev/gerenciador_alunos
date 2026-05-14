@@ -1,21 +1,36 @@
 package br.com.lvpcdev.gerenciador.model;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+@Entity
 public class RegistroAula {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "aluno_id")
     private Aluno aluno;
+
+    @ManyToOne
+    @JoinColumn(name = "curso_id")
     private Curso curso;
+
     private LocalDate dataAula;
     private LocalTime horaInicio;
     private LocalTime horaTermino;
     private String exercicio;
     private String tipoAula;
     private Integer numeroMaquina;
-    private boolean compareceu;
 
-    public RegistroAula(Aluno aluno, Curso curso, LocalDate dataAula, LocalTime horaInicio, LocalTime horaTermino, String exercicio, String tipoAula, Integer numeroMaquina, boolean compareceu) {
+    @Enumerated(EnumType.STRING)
+    private PresencaStatus precensaStatus;
+
+    public RegistroAula(Aluno aluno, Curso curso, LocalDate dataAula, LocalTime horaInicio, LocalTime horaTermino, String exercicio, String tipoAula, Integer numeroMaquina, PresencaStatus precensaStatus) {
         this.aluno = aluno;
         this.curso = curso;
         this.dataAula = dataAula;
@@ -24,8 +39,10 @@ public class RegistroAula {
         this.exercicio = exercicio;
         this.tipoAula = tipoAula;
         this.numeroMaquina = numeroMaquina;
-        this.compareceu = compareceu;
+        this.precensaStatus = precensaStatus;
     }
+
+    public RegistroAula(){}
 
     public Long getId() {
         return id;
@@ -99,11 +116,11 @@ public class RegistroAula {
         this.numeroMaquina = numeroMaquina;
     }
 
-    public boolean isCompareceu() {
-        return compareceu;
+    public PresencaStatus isCompareceu() {
+        return precensaStatus;
     }
 
-    public void setCompareceu(boolean compareceu) {
-        this.compareceu = compareceu;
+    public void setCompareceu(PresencaStatus precensaStatus) {
+        this.precensaStatus = precensaStatus;
     }
 }

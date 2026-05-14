@@ -1,16 +1,32 @@
 package br.com.lvpcdev.gerenciador.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class Curso {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
     private String descricao;
     private Integer cargaHoraria;
+
+
 
     public Curso(String nome, String descricao, Integer cargaHoraria) {
         this.nome = nome;
         this.descricao = descricao;
         this.cargaHoraria = cargaHoraria;
     }
+
+    public Curso() {
+
+    }
+
 
     public Long getId() {
         return id;

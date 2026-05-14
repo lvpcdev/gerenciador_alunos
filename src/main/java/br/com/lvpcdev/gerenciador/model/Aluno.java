@@ -1,17 +1,31 @@
 package br.com.lvpcdev.gerenciador.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class Aluno {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
     private String cpf;
     private String email;
     private String telefone;
 
+
     public Aluno(String nome, String cpf, String email, String telefone) {
         this.nome = nome;
         this.cpf = cpf;
         this.email = email;
         this.telefone = telefone;
+    }
+
+    public Aluno (){
+
     }
 
     public Long getId() {
