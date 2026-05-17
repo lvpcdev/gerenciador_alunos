@@ -33,6 +33,8 @@ public class TratadorDeErros {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> tratarErro500(Exception ex) {
+        ex.printStackTrace();
+
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Aconteceu um erro inesperado.");
     }
 
