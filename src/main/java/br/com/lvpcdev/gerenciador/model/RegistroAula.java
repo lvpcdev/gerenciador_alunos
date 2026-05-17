@@ -28,9 +28,9 @@ public class RegistroAula {
     private Integer numeroMaquina;
 
     @Enumerated(EnumType.STRING)
-    private PresencaStatus precensaStatus;
+    private PresencaStatus presencaStatus;
 
-    public RegistroAula(Aluno aluno, Curso curso, LocalDate dataAula, LocalTime horaInicio, LocalTime horaTermino, String exercicio, String tipoAula, Integer numeroMaquina, PresencaStatus precensaStatus) {
+    public RegistroAula(Aluno aluno, Curso curso, LocalDate dataAula, LocalTime horaInicio, LocalTime horaTermino, String exercicio, String tipoAula, Integer numeroMaquina, PresencaStatus presencaStatus) {
         this.aluno = aluno;
         this.curso = curso;
         this.dataAula = dataAula;
@@ -39,7 +39,7 @@ public class RegistroAula {
         this.exercicio = exercicio;
         this.tipoAula = tipoAula;
         this.numeroMaquina = numeroMaquina;
-        this.precensaStatus = precensaStatus;
+        this.presencaStatus = presencaStatus;
     }
 
     public RegistroAula(){}
@@ -116,11 +116,11 @@ public class RegistroAula {
         this.numeroMaquina = numeroMaquina;
     }
 
-    public PresencaStatus isCompareceu() {
-        return precensaStatus;
+    public PresencaStatus getCompareceu() {
+        return presencaStatus;
     }
 
-    public void setCompareceu(PresencaStatus precensaStatus) {
-        this.precensaStatus = precensaStatus;
+    public void setCompareceu(PresencaStatus presencaStatus) {
+        this.presencaStatus = presencaStatus;
     }
 }
