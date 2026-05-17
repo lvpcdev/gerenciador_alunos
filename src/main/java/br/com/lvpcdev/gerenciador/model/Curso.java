@@ -14,13 +14,15 @@ public class Curso {
     private String nome;
     private String descricao;
     private Integer cargaHoraria;
+    private Boolean ativo = true;
 
 
 
-    public Curso(String nome, String descricao, Integer cargaHoraria) {
+    public Curso(String nome, String descricao, Integer cargaHoraria, Boolean ativo) {
         this.nome = nome;
         this.descricao = descricao;
         this.cargaHoraria = cargaHoraria;
+        this.ativo = ativo;
     }
 
     public Curso() {
@@ -58,5 +60,13 @@ public class Curso {
 
     public void setCargaHoraria(Integer cargaHoraria) {
         this.cargaHoraria = cargaHoraria;
+    }
+
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
     }
 }

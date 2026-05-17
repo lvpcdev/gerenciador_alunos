@@ -15,13 +15,15 @@ public class Aluno {
     private String cpf;
     private String email;
     private String telefone;
+    private Boolean ativo = true;
 
 
-    public Aluno(String nome, String cpf, String email, String telefone) {
+    public Aluno(String nome, String cpf, String email, String telefone,Boolean ativo) {
         this.nome = nome;
         this.cpf = cpf;
         this.email = email;
         this.telefone = telefone;
+        this.ativo = ativo;
     }
 
     public Aluno (){
@@ -66,5 +68,13 @@ public class Aluno {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
     }
 }
