@@ -116,11 +116,11 @@ public class RegistroAula {
         this.numeroMaquina = numeroMaquina;
     }
 
-    public PresencaStatus getCompareceu() {
+    public PresencaStatus getPresencaStatus() {
         return presencaStatus;
     }
 
-    public void setCompareceu(PresencaStatus presencaStatus) {
+    public void setPresencaStatus(PresencaStatus presencaStatus) {
         this.presencaStatus = presencaStatus;
     }
 }
