@@ -5,6 +5,8 @@ import br.com.lvpcdev.gerenciador.dto.AlunoRequestDTO;
 import br.com.lvpcdev.gerenciador.model.Aluno;
 import br.com.lvpcdev.gerenciador.service.AlunoService;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,8 +33,41 @@ public class AlunoController {
         return alunoService.salvarAluno(aluno);
     }
 
-    @GetMapping
-    public List<Aluno> listarAlunos() {
-        return alunoService.listarTodos();
+    @GetMapping("/ativos")
+    public List<Aluno> listarAtivos() {
+        return alunoService.listarAtivos();
+    }
+
+    @GetMapping("/inativos")
+    public List<Aluno> listarInativos() {
+        return alunoService.listarInativos();
+    }
+
+
+    @PutMapping("/{id}")
+    public Aluno editarAluno(@PathVariable Long id, @Valid @RequestBody AlunoRequestDTO dto) {
+
+        Aluno novosDados = new Aluno();
+        novosDados.setNome(dto.nome());
+        novosDados.setCpf(dto.cpf());
+        novosDados.setEmail(dto.email());
+        novosDados.setTelefone(dto.telefone());
+
+        return alunoService.atualizarAluno(id, novosDados);
+    }
+
+    @PutMapping("/{id}/ativar")
+    public ResponseEntity<Aluno> ativarAluno(@PathVariable Long id) {
+        Aluno alunoAtivado = alunoService.ativarAluno(id);
+
+        return ResponseEntity.ok(alunoAtivado);
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> inativarAluno(@PathVariable Long id) {
+        alunoService.inativarAluno(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

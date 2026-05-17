@@ -8,6 +8,7 @@ import br.com.lvpcdev.gerenciador.repository.AlunoRepository;
 import br.com.lvpcdev.gerenciador.repository.CursoRepository;
 import br.com.lvpcdev.gerenciador.service.RegistroAulaService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -52,5 +53,38 @@ public class RegistroAulaController {
     @GetMapping
     public List<RegistroAula> listarRegistros() {
         return registroAulaService.listarTodos();
+    }
+
+    @PutMapping("/{id}")
+    public RegistroAula editarAula(@PathVariable Long id, @Valid @RequestBody RegistroAulaRequestDTO dto) {
+
+        Aluno alunoEncontrado = alunoRepository.findById(dto.alunoId()).
+                orElseThrow(() -> new RuntimeException("Aluno não encontrado no banco de dados"));
+
+        Curso cursoEncontrado = cursoRepository.findById(dto.cursoId()).
+                orElseThrow(() -> new RuntimeException("Curso não encontrado no banco de dados"));
+
+        RegistroAula novosDados = new RegistroAula();
+
+        novosDados.setAluno(alunoEncontrado);
+        novosDados.setCurso(cursoEncontrado);
+
+        novosDados.setDataAula(dto.dataAula());
+        novosDados.setHoraInicio(dto.horaInicio());
+        novosDados.setHoraTermino(dto.horaTermino());
+        novosDados.setExercicio(dto.exercicio());
+        novosDados.setTipoAula(dto.tipoAula());
+        novosDados.setNumeroMaquina(dto.numeroMaquina());
+        novosDados.setPresencaStatus(dto.presencaStatus());
+
+        return registroAulaService.atualizarRegistro(id, novosDados);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarRegistro(@PathVariable Long id) {
+
+        registroAulaService.deletarRegistro(id);
+
+        return ResponseEntity.noContent().build();
     }
 }
