@@ -22,4 +22,31 @@ public class RegistroAulaService {
     public List<RegistroAula> listarTodos() {
         return registroAulaRepository.findAll();
     }
+
+    public RegistroAula atualizarRegistro(Long id, RegistroAula novosDados) {
+
+        RegistroAula registroExistente = registroAulaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Registro não encontrado para a edição."));
+
+        registroExistente.setAluno(novosDados.getAluno());
+        registroExistente.setCurso(novosDados.getCurso());
+
+        registroExistente.setDataAula(novosDados.getDataAula());
+        registroExistente.setHoraInicio(novosDados.getHoraInicio());
+        registroExistente.setHoraTermino(novosDados.getHoraTermino());
+        registroExistente.setExercicio(novosDados.getExercicio());
+        registroExistente.setTipoAula(novosDados.getTipoAula());
+        registroExistente.setNumeroMaquina(novosDados.getNumeroMaquina());
+        registroExistente.setPresencaStatus(novosDados.getPresencaStatus());
+
+        return registroAulaRepository.save(registroExistente);
+    }
+
+    public void deletarRegistro(Long id) {
+
+        RegistroAula registroExistente = registroAulaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Registro não encontrado para a edição."));
+
+        registroAulaRepository.delete(registroExistente);
+    }
 }

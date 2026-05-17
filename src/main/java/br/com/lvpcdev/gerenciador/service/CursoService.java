@@ -19,7 +19,40 @@ public class CursoService {
         return cursoRepository.save(curso);
     }
 
-    public List<Curso> listarTodos() {
-        return cursoRepository.findAll();
+    public List<Curso> listarAtivos() {
+        return cursoRepository.findAllByAtivoTrue();
+    }
+
+    public List<Curso> listarInativos() {
+        return cursoRepository.findAllByAtivoFalse();
+    }
+
+    public Curso atualizarCurso(Long id, Curso novosDados) {
+
+        Curso cursoExistente = cursoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Curso não encontrado para a edição."));
+
+        cursoExistente.setNome(novosDados.getNome());
+        cursoExistente.setDescricao(novosDados.getDescricao());
+        cursoExistente.setCargaHoraria(novosDados.getCargaHoraria());
+
+        return cursoRepository.save(cursoExistente);
+    }
+
+    public void inativarCurso(Long id) {
+
+        Curso cursoExistente = cursoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Curso não encontrado."));
+
+        cursoExistente.setAtivo(false);
+        cursoRepository.save(cursoExistente);
+    }
+
+    public Curso ativarCurso(Long id) {
+        Curso cursoExistente = cursoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Curso não encontrado para reativação."));
+
+        cursoExistente.setAtivo(true);
+        return cursoRepository.save(cursoExistente);
     }
 }

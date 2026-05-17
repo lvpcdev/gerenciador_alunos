@@ -19,7 +19,42 @@ public class AlunoService {
         return alunoRepository.save(aluno);
     }
 
-    public List<Aluno> listarTodos() {
-        return alunoRepository.findAll();
+    public List<Aluno> listarAtivos() {
+        return alunoRepository.findAllByAtivoTrue();
+    }
+
+    public List<Aluno> listarInativos() {
+        return alunoRepository.findAllByAtivoFalse();
+    }
+
+    public Aluno atualizarAluno(Long id, Aluno novosDados) {
+
+        Aluno alunoExistente = alunoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Aluno não encontrado para a edição."));
+
+        alunoExistente.setNome(novosDados.getNome());
+        alunoExistente.setCpf(novosDados.getCpf());
+        alunoExistente.setEmail(novosDados.getEmail());
+        alunoExistente.setTelefone(novosDados.getTelefone());
+
+        return alunoRepository.save(alunoExistente);
+    }
+
+    public void inativarAluno(Long id) {
+        Aluno alunoExistente = alunoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Aluno não encontrado."));
+
+        alunoExistente.setAtivo(false);
+
+        alunoRepository.save(alunoExistente);
+    }
+
+    public Aluno ativarAluno(Long id) {
+        Aluno alunoExistente = alunoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Aluno não encontrado."));
+
+        alunoExistente.setAtivo(true);
+
+        return alunoRepository.save(alunoExistente);
     }
 }
