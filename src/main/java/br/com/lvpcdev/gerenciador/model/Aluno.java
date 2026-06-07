@@ -17,14 +17,22 @@ public class Aluno {
     private String cpf;
     private String email;
     private String telefone;
+    private LocalDate dataNascimento;
+    private String responsavelLegal;
+    private String rg;
+    private String endereco;
     private Boolean ativo = true;
 
 
-    public Aluno(String nome, String cpf, String email, String telefone,Boolean ativo) {
+    public Aluno(String nome, String cpf, String email, String telefone, LocalDate dataNascimento, String responsavelLegal, String rg, String endereco, Boolean ativo) {
         this.nome = nome;
         this.cpf = cpf;
         this.email = email;
         this.telefone = telefone;
+        this.dataNascimento = dataNascimento;
+        this.responsavelLegal = responsavelLegal;
+        this.rg = rg;
+        this.endereco = endereco;
         this.ativo = ativo;
     }
 
@@ -78,5 +86,37 @@ public class Aluno {
 
     public void setAtivo(Boolean ativo) {
         this.ativo = ativo;
+    }
+
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
+    }
+
+    public String getResponsavelLegal() {
+        return responsavelLegal;
+    }
+
+    public void setResponsavelLegal(String responsavelLegal) {
+        this.responsavelLegal = responsavelLegal;
+    }
+
+    public String getRg() {
+        return rg;
+    }
+
+    public void setRg(String rg) {
+        this.rg = rg;
+    }
+
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
     }
 }

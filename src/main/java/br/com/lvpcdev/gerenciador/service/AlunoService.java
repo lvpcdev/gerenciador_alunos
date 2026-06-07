@@ -36,6 +36,10 @@ public class AlunoService {
         alunoExistente.setCpf(novosDados.getCpf());
         alunoExistente.setEmail(novosDados.getEmail());
         alunoExistente.setTelefone(novosDados.getTelefone());
+        alunoExistente.setDataNascimento(novosDados.getDataNascimento());
+        alunoExistente.setRg(novosDados.getRg());
+        alunoExistente.setResponsavelLegal(novosDados.getResponsavelLegal());
+        alunoExistente.setEndereco(novosDados.getEndereco());
 
         return alunoRepository.save(alunoExistente);
     }
