@@ -21,21 +21,31 @@ public class UsuarioService {
     }
 
     public UsuarioResponseDTO salvarUsuario(UsuarioRequestDTO dto) {
+
+        if (dto.senha() == null || dto.senha().isBlank()) {
+            throw new IllegalArgumentException("A senha é obrigatória.");
+        }
+
         Usuario usuario = new Usuario();
         usuario.setLogin(dto.login());
         usuario.setNome(dto.nome());
+        usuario.setPerfil(dto.perfil());
         usuario.setSenha(passwordEncoder.encode(dto.senha()));
         return toDTO(usuarioRepository.save(usuario));
     }
 
     public UsuarioResponseDTO atualizarUsuario(Long id, UsuarioRequestDTO dto) {
 
+
         Usuario usuarioExistente = usuarioRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario não encontrado para a edição."));
 
         usuarioExistente.setNome(dto.nome());
         usuarioExistente.setLogin(dto.login());
-        usuarioExistente.setSenha(passwordEncoder.encode(dto.senha()));
+        usuarioExistente.setPerfil(dto.perfil());
+        if (dto.senha() != null && !dto.senha().isBlank()) {
+            usuarioExistente.setSenha(passwordEncoder.encode(dto.senha()));
+        }
 
         return toDTO(usuarioRepository.save(usuarioExistente));
     }
@@ -57,7 +67,8 @@ public class UsuarioService {
         return new UsuarioResponseDTO(
                 usuario.getId(),
                 usuario.getLogin(),
-                usuario.getNome()
+                usuario.getNome(),
+                usuario.getPerfil()
         );
     }
 }

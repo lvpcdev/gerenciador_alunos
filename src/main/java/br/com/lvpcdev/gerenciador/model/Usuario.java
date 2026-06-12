@@ -1,5 +1,6 @@
 package br.com.lvpcdev.gerenciador.model;
 
+import br.com.lvpcdev.gerenciador.model.enums.Perfil;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,11 +22,15 @@ public class Usuario implements UserDetails {
     private String senha;
     private String nome;
 
+    @Enumerated(EnumType.STRING)
+    private Perfil perfil;
 
-    public Usuario(String login, String senha, String nome) {
+
+    public Usuario(String login, String senha, String nome, Perfil perfil) {
         this.login = login;
         this.senha = senha;
         this.nome = nome;
+        this.perfil = perfil;
     }
 
     public Usuario() {
@@ -65,7 +70,7 @@ public class Usuario implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + perfil.name()));
     }
 
     @Override
@@ -76,6 +81,14 @@ public class Usuario implements UserDetails {
     @Override
     public String getUsername() {
         return login;
+    }
+
+    public Perfil getPerfil() {
+        return perfil;
+    }
+
+    public void setPerfil(Perfil perfil) {
+        this.perfil = perfil;
     }
 
     @Override
