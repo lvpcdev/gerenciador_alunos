@@ -1,5 +1,7 @@
 package br.com.lvpcdev.gerenciador.service;
 
+import br.com.lvpcdev.gerenciador.dto.CursoRequestDTO;
+import br.com.lvpcdev.gerenciador.dto.CursoResponseDTO;
 import br.com.lvpcdev.gerenciador.model.Curso;
 import br.com.lvpcdev.gerenciador.repository.CursoRepository;
 import org.springframework.stereotype.Service;
@@ -15,44 +17,62 @@ public class CursoService {
         this.cursoRepository = cursoRepository;
     }
 
-    public Curso salvarCurso(Curso curso) {
-        return cursoRepository.save(curso);
+    public CursoResponseDTO salvarCurso(CursoRequestDTO dto) {
+
+        Curso curso = new Curso();
+
+        curso.setNome(dto.nome());
+        curso.setDescricao(dto.descricao());
+        curso.setCargaHoraria(dto.cargaHoraria());
+
+        return toDTO(cursoRepository.save(curso));
     }
 
-    public List<Curso> listarAtivos() {
-        return cursoRepository.findAllByAtivoTrue();
+    public List<CursoResponseDTO> listarAtivos() {
+        return cursoRepository.findAllByAtivoTrue().stream().map(this::toDTO).toList();
     }
 
-    public List<Curso> listarInativos() {
-        return cursoRepository.findAllByAtivoFalse();
+    public List<CursoResponseDTO> listarInativos() {
+        return cursoRepository.findAllByAtivoFalse().stream().map(this::toDTO).toList();
     }
 
-    public Curso atualizarCurso(Long id, Curso novosDados) {
+    public CursoResponseDTO atualizarCurso(Long id, CursoRequestDTO dto) {
 
         Curso cursoExistente = cursoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Curso não encontrado para a edição."));
 
-        cursoExistente.setNome(novosDados.getNome());
-        cursoExistente.setDescricao(novosDados.getDescricao());
-        cursoExistente.setCargaHoraria(novosDados.getCargaHoraria());
+        cursoExistente.setNome(dto.nome());
+        cursoExistente.setDescricao(dto.descricao());
+        cursoExistente.setCargaHoraria(dto.cargaHoraria());
 
-        return cursoRepository.save(cursoExistente);
+        return toDTO(cursoRepository.save(cursoExistente));
     }
 
-    public void inativarCurso(Long id) {
+    public CursoResponseDTO inativarCurso(Long id) {
 
         Curso cursoExistente = cursoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Curso não encontrado."));
 
         cursoExistente.setAtivo(false);
-        cursoRepository.save(cursoExistente);
+        return toDTO(cursoRepository.save(cursoExistente));
     }
 
-    public Curso ativarCurso(Long id) {
+    public CursoResponseDTO ativarCurso(Long id) {
         Curso cursoExistente = cursoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Curso não encontrado para reativação."));
 
         cursoExistente.setAtivo(true);
-        return cursoRepository.save(cursoExistente);
+        return toDTO(cursoRepository.save(cursoExistente));
+    }
+
+    private CursoResponseDTO toDTO(Curso curso) {
+        return new CursoResponseDTO(
+                curso.getId(),
+                curso.getNome(),
+                curso.getDescricao(),
+                curso.getCargaHoraria(),
+                curso.getAtivo()
+        );
+
     }
 }
