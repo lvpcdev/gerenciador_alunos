@@ -28,7 +28,6 @@ public record RegistroAulaRequestDTO(
         @NotBlank(message = "O exercício é obrigatório.")
         String exercicio,
 
-        @NotBlank(message = "O tipo de aula é obrigatório.")
         String tipoAula,
 
         @NotNull(message = "O númeor da máquina é obrigatório.")

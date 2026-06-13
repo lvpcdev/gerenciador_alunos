@@ -26,7 +26,7 @@ public class TratadorDeErros {
         return ResponseEntity.badRequest().body(listaErrosLimpa);
     }
 
-    @ExceptionHandler(IllegalAccessError.class)
+    @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> tratarErroRegraDeNegocio(IllegalArgumentException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }

@@ -22,6 +22,7 @@ public class TokenService {
         return JWT.create()
                 .withIssuer("gerenciador-alunos")
                 .withSubject(usuario.getLogin())
+                .withClaim("perfil", usuario.getPerfil().name())
                 .withExpiresAt(gerarDataExpiracao())
                 .sign(algorithm);
     }

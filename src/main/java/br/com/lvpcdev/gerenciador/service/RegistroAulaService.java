@@ -75,7 +75,7 @@ public class RegistroAulaService {
     public void deletarRegistro(Long id) {
 
         RegistroAula registroExistente = registroAulaRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Registro não encontrado para a edição."));
+                .orElseThrow(() -> new IllegalArgumentException("Registro não encontrado para a exclusão."));
 
         registroAulaRepository.delete(registroExistente);
     }

@@ -17,7 +17,6 @@ public record AlunoRequestDTO(
         @CPF(message = "O CPF informado é inválido.")
         String cpf,
 
-        @NotBlank(message = "O e-mail é obrigatório.")
         @Email(message = "O formato do e-mail é inválido.")
         String email,
 
@@ -28,7 +27,6 @@ public record AlunoRequestDTO(
         @Past(message = "A data de nascimento deve ser uma data no passado.")
         LocalDate dataNascimento,
 
-        @NotBlank(message = "O rg é obrigatório.")
         String rg,
 
         String responsavelLegal,
