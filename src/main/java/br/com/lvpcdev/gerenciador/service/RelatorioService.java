@@ -11,7 +11,9 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.springframework.stereotype.Service;
-
+import org.apache.poi.xwpf.usermodel.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
@@ -36,7 +38,7 @@ public class RelatorioService {
 
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            Document document = new Document();
+            com.itextpdf.text.Document document = new com.itextpdf.text.Document();
             PdfWriter.getInstance(document, baos);
             document.open();
 
@@ -100,58 +102,87 @@ public class RelatorioService {
                 .orElseThrow(() -> new IllegalArgumentException("Contrato não encontrado."));
 
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            Document document = new Document();
-            PdfWriter.getInstance(document, baos);
-            document.open();
-
-            Font titleFont = new Font(Font.FontFamily.HELVETICA, 20, Font.BOLD);
-            Font boldFont = new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD);
-            Font normalFont = new Font(Font.FontFamily.HELVETICA, 11);
-
-
-            Paragraph header = new Paragraph("ALL CAN\nCursos de Informática", titleFont);
-            header.setAlignment(Element.ALIGN_CENTER);
-            document.add(header);
-            document.add(Chunk.NEWLINE);
-
-
-            Paragraph titulo = new Paragraph("CONTRATO DE MATRÍCULA", titleFont);
-            titulo.setAlignment(Element.ALIGN_CENTER);
-            document.add(titulo);
-            document.add(Chunk.NEWLINE);
+            FileInputStream fis = new FileInputStream("/home/contrato_template.docx");
+            XWPFDocument document = new XWPFDocument(fis);
+            fis.close();
 
             Aluno aluno = contrato.getAluno();
-            document.add(new Paragraph("Nome do aluno: " + aluno.getNome(), boldFont));
-            document.add(new Paragraph("CPF: " + aluno.getCpf() + "    RG: " + (aluno.getRg() != null ? aluno.getRg() : "---"), normalFont));
-            document.add(new Paragraph("Data de Nascimento: " + (aluno.getDataNascimento() != null ? aluno.getDataNascimento() : "---"), normalFont));
-            document.add(new Paragraph("Responsável legal: " + (aluno.getResponsavelLegal() != null ? aluno.getResponsavelLegal() : "---"), normalFont));
-            document.add(new Paragraph("Endereço: " + aluno.getEndereco(), normalFont));
-            document.add(Chunk.NEWLINE);
+            String diasSemana = contrato.getDiasSemana().stream()
+                    .map(d -> d.name())
+                    .collect(java.util.stream.Collectors.joining(", "));
 
-            document.add(new Paragraph("Início do Curso: " + contrato.getDataInicio(), boldFont));
-            document.add(new Paragraph("Horas/Aulas Mês: " + contrato.getHorasAulasMes() + " horas", normalFont));
-            document.add(new Paragraph("Dia do vencimento: " + contrato.getDiaVencimento() + " de cada mês", normalFont));
-            document.add(new Paragraph("Horário das aulas: " + contrato.getHoraInicio() + " às " + contrato.getHoraTermino(), normalFont));
-            document.add(new Paragraph("Dias da semana: " + contrato.getDiasSemana(), normalFont));
-            document.add(new Paragraph("Curso: " + contrato.getCurso().getNome(), normalFont));
-            document.add(Chunk.NEWLINE);
-            document.add(Chunk.NEWLINE);
+            java.util.Map<String, String> marcadores = new java.util.HashMap<>();
+            marcadores.put("{{NUMERO_CONTRATO}}", String.valueOf(contrato.getId()));
+            marcadores.put("{{NOME_ALUNO}}", aluno.getNome());
+            marcadores.put("{{CPF}}", aluno.getCpf());
+            marcadores.put("{{RG}}", aluno.getRg() != null ? aluno.getRg() : "---");
+            marcadores.put("{{ENDERECO}}", aluno.getEndereco());
+            marcadores.put("{{TELEFONE}}", aluno.getTelefone() != null ? aluno.getTelefone() : "---");
+            marcadores.put("{{RESPONSAVEL_LEGAL}}", aluno.getResponsavelLegal() != null ? aluno.getResponsavelLegal() : "---");
+            marcadores.put("{{DATA_NASCIMENTO}}", aluno.getDataNascimento()     != null ? aluno.getDataNascimento().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "---");
+            marcadores.put("{{DATA_INICIO}}", contrato.getDataInicio().format(java.time.format.DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy", new java.util.Locale("pt", "BR"))));
+            marcadores.put("{{HORAS_AULAS_MES}}", String.valueOf(contrato.getHorasAulasMes()));
+            marcadores.put("{{DIA_VENCIMENTO}}", String.valueOf(contrato.getDiaVencimento()));
+            marcadores.put("{{HORA_INICIO}}", contrato.getHoraInicio().toString());
+            marcadores.put("{{HORA_TERMINO}}", contrato.getHoraTermino().toString());
+            marcadores.put("{{DIAS_SEMANA}}", diasSemana);
+            marcadores.put("{{CURSO}}", contrato.getCurso().getNome());
+            marcadores.put("{{DATA_CRIACAO}}", contrato.getDataCriacao().format(java.time.format.DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy", new java.util.Locale("pt", "BR"))));
 
-            document.add(new Paragraph("Goiânia, " + contrato.getDataCriacao(), normalFont));
-            document.add(Chunk.NEWLINE);
-            document.add(Chunk.NEWLINE);
-            document.add(new Paragraph("_______________________________________", normalFont));
-            document.add(new Paragraph(aluno.getNome(), normalFont));
-            document.add(Chunk.NEWLINE);
-            document.add(new Paragraph("_______________________________________", normalFont));
-            document.add(new Paragraph("All Can Informática", normalFont));
 
+            for (XWPFParagraph paragraph : document.getParagraphs()) {
+                substituirMarcadores(paragraph, marcadores);
+            }
+
+            for (XWPFTable table : document.getTables()) {
+                for (XWPFTableRow row : table.getRows()) {
+                    for (XWPFTableCell cell : row.getTableCells()) {
+                        for (XWPFParagraph paragraph : cell.getParagraphs()) {
+                            substituirMarcadores(paragraph, marcadores);
+                        }
+                    }
+                }
+            }
+
+            java.io.File tempDocx = java.io.File.createTempFile("contrato_", ".docx");
+            FileOutputStream fos = new FileOutputStream(tempDocx);
+            document.write(fos);
+            fos.close();
             document.close();
-            return baos.toByteArray();
+
+            java.io.File tempDir = tempDocx.getParentFile();
+            ProcessBuilder pb = new ProcessBuilder(
+                    "libreoffice", "--headless", "--convert-to", "pdf",
+                    "--outdir", tempDir.getAbsolutePath(),
+                    tempDocx.getAbsolutePath()
+            );
+            pb.redirectErrorStream(true);
+            Process process = pb.start();
+            process.waitFor();
+
+            String pdfPath = tempDocx.getAbsolutePath().replace(".docx", ".pdf");
+            java.io.File pdfFile = new java.io.File(pdfPath);
+            byte[] pdfBytes = java.nio.file.Files.readAllBytes(pdfFile.toPath());
+
+            tempDocx.delete();
+            pdfFile.delete();
+
+            return pdfBytes;
 
         } catch (Exception e) {
             throw new RuntimeException("Erro ao gerar PDF do contrato.", e);
+        }
+    }
+
+    private void substituirMarcadores(XWPFParagraph paragraph, java.util.Map<String, String> marcadores) {
+        for (XWPFRun run : paragraph.getRuns()) {
+            String text = run.getText(0);
+            if (text != null) {
+                for (java.util.Map.Entry<String, String> entry : marcadores.entrySet()) {
+                    text = text.replace(entry.getKey(), entry.getValue());
+                }
+                run.setText(text, 0);
+            }
         }
     }
 }

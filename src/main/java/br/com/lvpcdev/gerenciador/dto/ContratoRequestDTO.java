@@ -30,7 +30,7 @@ public record ContratoRequestDTO(
         LocalTime horaTermino,
 
         @NotNull(message = "Selecione pelo menos 1 dia da semana")
-        List<DiaSemana> diaSemana
+        List<DiaSemana> diasSemana
 
 ) {
 

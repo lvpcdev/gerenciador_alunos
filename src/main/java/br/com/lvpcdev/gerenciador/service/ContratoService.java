@@ -39,7 +39,7 @@ public class ContratoService {
         contrato.setDiaVencimento(dto.diaVencimento());
         contrato.setHoraInicio(dto.horaInicio());
         contrato.setHoraTermino(dto.horaTermino());
-        contrato.setDiasSemana(dto.diaSemana());
+        contrato.setDiasSemana(dto.diasSemana());
         contrato.setDataCriacao(LocalDate.now());
 
         return toDTO(contratoRepository.save(contrato));
