@@ -2,27 +2,27 @@ package br.com.lvpcdev.gerenciador.controller;
 
 import br.com.lvpcdev.gerenciador.service.RelatorioService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.YearMonth;
 
 @RestController
 @RequestMapping("/relatorios")
-public class RealatorioController {
+public class RelatorioController {
 
     private final RelatorioService relatorioService;
 
-    public RealatorioController(RelatorioService relatorioService) {
+    public RelatorioController(RelatorioService relatorioService) {
         this.relatorioService = relatorioService;
     }
 
     @GetMapping("/presencas/{alunoId}")
-    public ResponseEntity<byte[]> gerarRelatorioPresencas(@PathVariable Long alunoId) {
-        byte[] pdf = relatorioService.gerarRelatorioPresencas(alunoId);
+    public ResponseEntity<byte[]> gerarRelatorioPresencas(@PathVariable Long alunoId, @RequestParam String mesAno) {
+        YearMonth ym = YearMonth.parse(mesAno);
+        byte[] pdf = relatorioService.gerarRelatorioPresencas(alunoId, ym);
         return ResponseEntity.ok()
                 .header("Content-Type", "application/pdf")
-                .header("Content-Disposition", "attachment; filename=relatorio-presencas.pdf")
+                .header("Content-Disposition", "attachment; filename=relatorio-" + mesAno + ".pdf")
                 .body(pdf);
     }
 

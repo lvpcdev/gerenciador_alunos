@@ -2,6 +2,7 @@ package br.com.lvpcdev.gerenciador.service;
 
 import br.com.lvpcdev.gerenciador.model.Aluno;
 import br.com.lvpcdev.gerenciador.model.Contrato;
+import br.com.lvpcdev.gerenciador.model.PresencaStatus;
 import br.com.lvpcdev.gerenciador.model.RegistroAula;
 import br.com.lvpcdev.gerenciador.repository.AlunoRepository;
 import br.com.lvpcdev.gerenciador.repository.ContratoRepository;
@@ -15,7 +16,12 @@ import org.apache.poi.xwpf.usermodel.*;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ByteArrayOutputStream;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class RelatorioService {
@@ -30,11 +36,18 @@ public class RelatorioService {
         this.contratoRepository = contratoRepository;
     }
 
-    public byte[] gerarRelatorioPresencas(Long alunoId) {
+    public byte[] gerarRelatorioPresencas(Long alunoId, YearMonth mesAno) {
         Aluno aluno = alunoRepository.findById(alunoId)
                 .orElseThrow(() -> new IllegalArgumentException("Aluno não encontrado."));
 
-        List<RegistroAula> registros = registroAulaRepository.findByAlunoId(alunoId);
+        LocalDate inicio = mesAno.atDay(1);
+        LocalDate fim = mesAno.atEndOfMonth();
+
+
+        List<RegistroAula> registros = registroAulaRepository.findByAlunoIdAndDataAulaBetween(alunoId, inicio, fim);
+
+        long totalPresencaMin = 0;
+        long totalReporMin = 0;
 
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -42,8 +55,12 @@ public class RelatorioService {
             PdfWriter.getInstance(document, baos);
             document.open();
 
+            DateTimeFormatter fmtMes = DateTimeFormatter.ofPattern("MMMM/yyyy", new Locale("pt", "BR"));
+            String mesFormatado = mesAno.format(fmtMes);
+            mesFormatado = mesFormatado.substring(0, 1).toUpperCase() + mesFormatado.substring(1);
+
             Font titleFont = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD);
-            Paragraph titulo = new Paragraph("Relatório de Presenças", titleFont);
+            Paragraph titulo = new Paragraph("Relatório de Presenças - " + mesFormatado, titleFont);
             titulo.setAlignment(Element.ALIGN_CENTER);
             document.add(titulo);
             document.add(Chunk.NEWLINE);
@@ -64,14 +81,14 @@ public class RelatorioService {
             document.add(new Paragraph("Presenças: " + presentes, normalFont));
             document.add(new Paragraph("Ausências: " + ausentes, normalFont));
             document.add(new Paragraph("Taxa de presença: " + taxa + "%", normalFont));
-            document.add(Chunk.NEWLINE);
 
-            PdfPTable tabela = new PdfPTable(5);
+
+            PdfPTable tabela = new PdfPTable(6);
             tabela.setWidthPercentage(100);
-            tabela.setWidths(new float[]{2f, 3f, 2f, 2f, 2f});
+            tabela.setWidths(new float[]{2f, 3f, 2f, 2f, 1.5f,2f});
 
             Font headerFont = new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD, BaseColor.WHITE);
-            String[] cabecalhos = {"Data", "Curso", "Início", "Término", "Presença"};
+            String[] cabecalhos = {"Data", "Curso", "Início", "Término", "Horas","Presença"};
             for (String cab : cabecalhos) {
                 PdfPCell cell = new PdfPCell(new Phrase(cab, headerFont));
                 cell.setBackgroundColor(new BaseColor(230, 126, 34));
@@ -80,14 +97,31 @@ public class RelatorioService {
             }
 
             for (RegistroAula r : registros) {
+
+                Duration duracao = Duration.between(r.getHoraInicio(), r.getHoraTermino());
+                long minutos = duracao.toMinutes();
+
+                String horasTexto = "-";
+                if (r.getPresencaStatus().equals(PresencaStatus.PRESENTE)) {
+                    totalPresencaMin += minutos;
+                    horasTexto = formatarMinutos(minutos);
+                } else {
+                    totalReporMin += minutos;
+                }
                 tabela.addCell(r.getDataAula().toString());
                 tabela.addCell(r.getCurso().getNome());
                 tabela.addCell(r.getHoraInicio().toString());
                 tabela.addCell(r.getHoraTermino().toString());
+                tabela.addCell(horasTexto);
                 tabela.addCell(r.getPresencaStatus().name());
             }
 
             document.add(tabela);
+
+            document.add(Chunk.NEWLINE);
+            document.add(new Paragraph("Total de horas no mês: " + formatarMinutos(totalPresencaMin), normalFont));
+            document.add(new Paragraph("Horas a repor: " + formatarMinutos(totalReporMin), normalFont));
+
             document.close();
 
             return baos.toByteArray();
@@ -184,5 +218,11 @@ public class RelatorioService {
                 run.setText(text, 0);
             }
         }
+    }
+
+    private String formatarMinutos(long minutos) {
+        long horas = minutos / 60;
+        long restante = minutos % 60;
+        return horas + "h" + (restante > 0 ? String.format("%02d", restante) + "m" : "");
     }
 }
