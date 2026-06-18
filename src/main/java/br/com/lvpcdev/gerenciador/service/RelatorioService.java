@@ -2,7 +2,7 @@ package br.com.lvpcdev.gerenciador.service;
 
 import br.com.lvpcdev.gerenciador.model.Aluno;
 import br.com.lvpcdev.gerenciador.model.Contrato;
-import br.com.lvpcdev.gerenciador.model.PresencaStatus;
+import br.com.lvpcdev.gerenciador.model.enums.PresencaStatus;
 import br.com.lvpcdev.gerenciador.model.RegistroAula;
 import br.com.lvpcdev.gerenciador.repository.AlunoRepository;
 import br.com.lvpcdev.gerenciador.repository.ContratoRepository;
@@ -81,6 +81,7 @@ public class RelatorioService {
             document.add(new Paragraph("Presenças: " + presentes, normalFont));
             document.add(new Paragraph("Ausências: " + ausentes, normalFont));
             document.add(new Paragraph("Taxa de presença: " + taxa + "%", normalFont));
+            document.add(Chunk.NEWLINE);
 
 
             PdfPTable tabela = new PdfPTable(6);

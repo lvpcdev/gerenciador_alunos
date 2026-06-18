@@ -1,6 +1,6 @@
 package br.com.lvpcdev.gerenciador.dto;
 
-import br.com.lvpcdev.gerenciador.model.PresencaStatus;
+import br.com.lvpcdev.gerenciador.model.enums.PresencaStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

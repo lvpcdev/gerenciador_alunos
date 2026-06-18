@@ -1,5 +1,6 @@
 package br.com.lvpcdev.gerenciador.model;
 
+import br.com.lvpcdev.gerenciador.model.enums.PresencaStatus;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;

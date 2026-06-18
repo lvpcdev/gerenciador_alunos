@@ -1,6 +1,6 @@
 package br.com.lvpcdev.gerenciador.dto;
 
-import br.com.lvpcdev.gerenciador.model.PresencaStatus;
+import br.com.lvpcdev.gerenciador.model.enums.PresencaStatus;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
