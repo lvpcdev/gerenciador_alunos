@@ -65,4 +65,18 @@ public class Livro {
     public void setQuantidadeDisponivel(Integer quantidadeDisponivel) {
         this.quantidadeDisponivel = quantidadeDisponivel;
     }
+
+    public void decrementarEstoque() {
+        if (this.quantidadeDisponivel <= 0) {
+            throw new IllegalArgumentException("Não há exemplares disponíveis para este livro.");
+        }
+        this.quantidadeDisponivel--;
+    }
+
+    public void incrementarEstoque() {
+        if (this.quantidadeDisponivel >= this.quantidadeTotal) {
+            throw new IllegalArgumentException("Quantidade disponível não pode exceder o total.");
+        }
+        this.quantidadeDisponivel++;
+    }
 }

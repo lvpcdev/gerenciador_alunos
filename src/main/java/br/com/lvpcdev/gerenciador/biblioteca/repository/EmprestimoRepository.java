@@ -11,4 +11,6 @@ import java.util.List;
 @Repository
 public interface EmprestimoRepository extends JpaRepository<Emprestimo, Long> {
     List<Emprestimo> findByStatusEmprestimoAndDataPrevistaDevolucaoBefore(StatusEmprestimo statusEmprestimo, LocalDate data);
+
+    List<Emprestimo> findByStatusEmprestimo(StatusEmprestimo statusEmprestimo);
 }

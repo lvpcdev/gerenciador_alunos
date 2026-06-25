@@ -91,4 +91,7 @@ public class Emprestimo {
     public void setPessoa(Pessoa pessoa) {
         this.pessoa = pessoa;
     }
+
+    public void getLiv() {
+    }
 }
