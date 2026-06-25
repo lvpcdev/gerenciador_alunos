@@ -49,10 +49,10 @@ public class AlunoController {
     }
 
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> inativarAluno(@PathVariable Long id) {
-        alunoService.inativarAluno(id);
+    @PutMapping("/{id}/inativar")
+    public ResponseEntity<AlunoResponseDTO> inativarAluno(@PathVariable Long id) {
+        AlunoResponseDTO alunoInativado = alunoService.inativarAluno(id);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(alunoInativado);
     }
 }

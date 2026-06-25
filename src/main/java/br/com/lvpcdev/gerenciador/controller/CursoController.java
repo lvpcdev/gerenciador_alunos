@@ -48,9 +48,9 @@ public class CursoController {
         return ResponseEntity.ok(cursoAtivado);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> inativarCurso(@PathVariable Long id) {
-        cursoService.inativarCurso(id);
-        return ResponseEntity.noContent().build();
+    @PutMapping("/{id}/inativar")
+    public ResponseEntity<CursoResponseDTO> inativarCurso(@PathVariable Long id) {
+        CursoResponseDTO cursoInativado = cursoService.inativarCurso(id);
+        return ResponseEntity.ok(cursoInativado);
     }
 }
