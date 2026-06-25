@@ -17,6 +17,7 @@ public class Pessoa {
     private String email;
     private String telefone;
     private String endereco;
+    private Boolean ativo = true;
 
     public Pessoa() {
     }
@@ -75,5 +76,13 @@ public class Pessoa {
 
     public void setEndereco(String endereco) {
         this.endereco = endereco;
+    }
+
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
     }
 }

@@ -15,6 +15,7 @@ public class Livro {
     private String autor;
     private Integer quantidadeTotal;
     private Integer quantidadeDisponivel;
+    private Boolean ativo = true;
 
     public Livro() {
     }
@@ -64,6 +65,14 @@ public class Livro {
 
     public void setQuantidadeDisponivel(Integer quantidadeDisponivel) {
         this.quantidadeDisponivel = quantidadeDisponivel;
+    }
+
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
     }
 
     public void decrementarEstoque() {
