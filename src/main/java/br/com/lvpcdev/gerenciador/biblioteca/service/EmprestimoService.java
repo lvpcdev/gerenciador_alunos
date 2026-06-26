@@ -36,6 +36,10 @@ public class EmprestimoService {
         Livro livro = livroRepository.findById(dto.livroId())
                 .orElseThrow(() -> new IllegalArgumentException("Livro não encontrado"));
 
+        if (dto.dataPrevistaDevolucao().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("A data prevista de devolução deve ser posterior à data de hoje.");
+        }
+
         Emprestimo emprestimo = new Emprestimo();
         emprestimo.setDataEmprestimo(LocalDate.now());
         emprestimo.setDataPrevistaDevolucao(dto.dataPrevistaDevolucao());

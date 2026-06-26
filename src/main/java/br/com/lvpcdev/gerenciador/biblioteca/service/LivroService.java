@@ -41,9 +41,20 @@ public class LivroService {
         Livro livroExistente = livroRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Livro não encontrado para a edição."));
 
+        int emprestados = livroExistente.getQuantidadeTotal() - livroExistente.getQuantidadeDisponivel();
+
+        if (dto.quantidadeTotal() < emprestados) {
+            throw new IllegalArgumentException(
+                    "Quantidade total não pode ser menor que o número de exemplares emprestados (" + emprestados + ")."
+            );
+        }
+
+        int diferenca = dto.quantidadeTotal() - livroExistente.getQuantidadeTotal();
+
         livroExistente.setTitulo(dto.titulo());
         livroExistente.setAutor(dto.autor());
         livroExistente.setQuantidadeTotal(dto.quantidadeTotal());
+        livroExistente.setQuantidadeDisponivel(livroExistente.getQuantidadeDisponivel() + diferenca);
 
         return toDTO(livroRepository.save(livroExistente));
     }
