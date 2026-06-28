@@ -34,4 +34,14 @@ public class RelatorioController {
                 .header("Content-Disposition", "attachment; filename=contrato-matricula.pdf")
                 .body(pdf);
     }
+
+    @GetMapping("/ficha/{contratoId}")
+    public ResponseEntity<byte[]> gerarFichaDeAnotacoesDeAlunos(@PathVariable Long contratoId) {
+        byte[] xlsx = relatorioService.gerarFichaDeAnotacoesDeAlunos(
+                contratoId);
+        return ResponseEntity.ok()
+                .header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                .header("Content-Disposition", "attachment; filename=ficha-de-anotacoes.xlsx")
+                .body(xlsx);
+    }
 }
