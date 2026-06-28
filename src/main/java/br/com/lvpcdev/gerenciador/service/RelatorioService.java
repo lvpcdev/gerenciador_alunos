@@ -11,8 +11,12 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.apache.poi.xwpf.usermodel.*;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -20,8 +24,10 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 @Service
 public class RelatorioService {
@@ -206,6 +212,66 @@ public class RelatorioService {
 
         } catch (Exception e) {
             throw new RuntimeException("Erro ao gerar PDF do contrato.", e);
+        }
+    }
+
+    public byte[] gerarFichaDeAnotacoesDeAlunos(Long contratoId) {
+        Contrato contrato = contratoRepository.findById(contratoId)
+                .orElseThrow(() -> new IllegalArgumentException("Contrato não encontrado."));
+
+        try {
+            FileInputStream fis = new FileInputStream("/home/ficha_template.xlsx");
+            XSSFWorkbook workbook = new XSSFWorkbook(fis);
+            fis.close();
+
+            XSSFSheet sheet = workbook.getSheetAt(0);
+
+            sheet.getRow(0).getCell(4).setCellValue(contrato.getAluno().getNome());
+            sheet.getRow(24).getCell(4).setCellValue(contrato.getDataInicio().toString());
+            sheet.getRow(25).getCell(4).setCellValue(contrato.getHorasAulasMes());
+            sheet.getRow(26).getCell(4).setCellValue(
+                    contrato.getDiasSemana().stream()
+                            .map(d -> d.name())
+                            .collect(java.util.stream.Collectors.joining(", "))
+            );
+            sheet.getRow(27).getCell(4).setCellValue(
+                    contrato.getHoraInicio() + " às " + contrato.getHoraTermino()
+            );
+            sheet.getRow(28).getCell(4).setCellValue(contrato.getDiaVencimento());
+
+            Map<String, Integer> cursosEsquerda = new HashMap<>();
+            cursosEsquerda.put("Digitação", 2);
+            cursosEsquerda.put("Word", 3);
+            cursosEsquerda.put("PowerPoint", 4);
+            cursosEsquerda.put("Excel", 5);
+            cursosEsquerda.put("Windows", 6);
+            cursosEsquerda.put("Internet", 7);
+            cursosEsquerda.put("CorelDRAW", 8);
+            cursosEsquerda.put("Corel Photo", 9);
+
+            Map<String, Integer> cursosDireita = new HashMap<>();
+            cursosDireita.put("PrintArtistic", 2);
+            cursosDireita.put("Fireworks", 3);
+            cursosDireita.put("Dreanwever", 4);
+            cursosDireita.put("Flash", 5);
+            cursosDireita.put("Photoshop", 6);
+            cursosDireita.put("Excel Avançado", 7);
+
+            String nomeCurso = contrato.getCurso().getNome();
+
+            if (cursosEsquerda.containsKey(nomeCurso)) {
+                sheet.getRow(cursosEsquerda.get(nomeCurso)).getCell(0).setCellValue("X");
+            } else if (cursosDireita.containsKey(nomeCurso)) {
+                sheet.getRow(cursosDireita.get(nomeCurso)).getCell(2).setCellValue("X");
+            }
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            workbook.write(baos);
+            workbook.close();
+            return baos.toByteArray();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao gerar ficha.", e);
         }
     }
 
