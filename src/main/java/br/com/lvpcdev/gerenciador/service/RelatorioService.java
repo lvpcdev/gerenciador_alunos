@@ -2,10 +2,13 @@ package br.com.lvpcdev.gerenciador.service;
 
 import br.com.lvpcdev.gerenciador.model.Aluno;
 import br.com.lvpcdev.gerenciador.model.Contrato;
+import br.com.lvpcdev.gerenciador.model.Curso;
+import br.com.lvpcdev.gerenciador.model.enums.CategoriaCurso;
 import br.com.lvpcdev.gerenciador.model.enums.PresencaStatus;
 import br.com.lvpcdev.gerenciador.model.RegistroAula;
 import br.com.lvpcdev.gerenciador.repository.AlunoRepository;
 import br.com.lvpcdev.gerenciador.repository.ContratoRepository;
+import br.com.lvpcdev.gerenciador.repository.CursoRepository;
 import br.com.lvpcdev.gerenciador.repository.RegistroAulaRepository;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -16,7 +19,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.apache.poi.xwpf.usermodel.*;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -24,10 +26,8 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 @Service
 public class RelatorioService {
@@ -35,11 +35,13 @@ public class RelatorioService {
     private final RegistroAulaRepository registroAulaRepository;
     private final AlunoRepository alunoRepository;
     private final ContratoRepository contratoRepository;
+    private final CursoRepository cursoRepository;
 
-    public RelatorioService(RegistroAulaRepository registroAulaRepository, AlunoRepository alunoRepository, ContratoRepository contratoRepository) {
+    public RelatorioService(RegistroAulaRepository registroAulaRepository, AlunoRepository alunoRepository, ContratoRepository contratoRepository, CursoRepository cursoRepository) {
         this.registroAulaRepository = registroAulaRepository;
         this.alunoRepository = alunoRepository;
         this.contratoRepository = contratoRepository;
+        this.cursoRepository = cursoRepository;
     }
 
     public byte[] gerarRelatorioPresencas(Long alunoId, YearMonth mesAno) {
@@ -167,7 +169,7 @@ public class RelatorioService {
             marcadores.put("{{HORA_INICIO}}", contrato.getHoraInicio().toString());
             marcadores.put("{{HORA_TERMINO}}", contrato.getHoraTermino().toString());
             marcadores.put("{{DIAS_SEMANA}}", diasSemana);
-            marcadores.put("{{CURSO}}", contrato.getCurso().getNome());
+            marcadores.put("{{MODALIDADE}}", contrato.getModalidade().toString());
             marcadores.put("{{DATA_CRIACAO}}", contrato.getDataCriacao().format(java.time.format.DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy", new java.util.Locale("pt", "BR"))));
 
 
@@ -227,7 +229,7 @@ public class RelatorioService {
             XSSFSheet sheet = workbook.getSheetAt(0);
 
             sheet.getRow(0).getCell(4).setCellValue(contrato.getAluno().getNome());
-            sheet.getRow(24).getCell(4).setCellValue(contrato.getDataInicio().toString());
+            sheet.getRow(24).getCell(4).setCellValue(contrato.getDataInicio().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
             sheet.getRow(25).getCell(4).setCellValue(contrato.getHorasAulasMes());
             sheet.getRow(26).getCell(4).setCellValue(
                     contrato.getDiasSemana().stream()
@@ -257,12 +259,36 @@ public class RelatorioService {
             cursosDireita.put("Photoshop", 6);
             cursosDireita.put("Excel Avançado", 7);
 
-            String nomeCurso = contrato.getCurso().getNome();
+            List<Curso> cursosMarcados;
 
-            if (cursosEsquerda.containsKey(nomeCurso)) {
-                sheet.getRow(cursosEsquerda.get(nomeCurso)).getCell(0).setCellValue("X");
-            } else if (cursosDireita.containsKey(nomeCurso)) {
-                sheet.getRow(cursosDireita.get(nomeCurso)).getCell(2).setCellValue("X");
+            switch (contrato.getModalidade()) {
+                case CURSOS_BASICOS, CURSO_BASICO_30_DIAS ->
+                        cursosMarcados = cursoRepository.findAllByCategoria(CategoriaCurso.BASICO);
+                case CURSOS_INTERMEDIARIOS ->
+                        cursosMarcados = cursoRepository.findAllByCategoria(CategoriaCurso.AVANCADO);
+                case CURSOS_BASICOS_E_INTERMEDIARIOS -> {
+                    cursosMarcados = new ArrayList<>();
+                    cursosMarcados.addAll(cursoRepository.findAllByCategoria(CategoriaCurso.BASICO));
+                    cursosMarcados.addAll(cursoRepository.findAllByCategoria(CategoriaCurso.AVANCADO));
+                }
+                case DIGITACAO_30_DIAS, DIGITACAO_15_DIAS -> {
+                    cursosMarcados = new ArrayList<>();
+                    cursoRepository.findAllByCategoria(CategoriaCurso.BASICO)
+                            .stream()
+                            .filter(c -> c.getNome().equalsIgnoreCase("Digitação"))
+                            .findFirst()
+                            .ifPresent(cursosMarcados::add);
+                }
+                default -> cursosMarcados = new ArrayList<>();
+            }
+
+            for (Curso curso : cursosMarcados) {
+                String nome = curso.getNome().trim();
+                if (cursosEsquerda.containsKey(nome)) {
+                    sheet.getRow(cursosEsquerda.get(nome)).getCell(0).setCellValue("X");
+                } else if (cursosDireita.containsKey(nome)) {
+                    sheet.getRow(cursosDireita.get(nome)).getCell(2).setCellValue("X");
+                }
             }
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -275,11 +301,11 @@ public class RelatorioService {
         }
     }
 
-    private void substituirMarcadores(XWPFParagraph paragraph, java.util.Map<String, String> marcadores) {
+    private void substituirMarcadores(XWPFParagraph paragraph, Map<String, String> marcadores) {
         for (XWPFRun run : paragraph.getRuns()) {
             String text = run.getText(0);
             if (text != null) {
-                for (java.util.Map.Entry<String, String> entry : marcadores.entrySet()) {
+                for (Map.Entry<String, String> entry : marcadores.entrySet()) {
                     text = text.replace(entry.getKey(), entry.getValue());
                 }
                 run.setText(text, 0);

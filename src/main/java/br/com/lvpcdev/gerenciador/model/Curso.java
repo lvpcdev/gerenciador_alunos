@@ -1,9 +1,7 @@
 package br.com.lvpcdev.gerenciador.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import br.com.lvpcdev.gerenciador.model.enums.CategoriaCurso;
+import jakarta.persistence.*;
 
 @Entity
 public class Curso {
@@ -16,13 +14,17 @@ public class Curso {
     private Integer cargaHoraria;
     private Boolean ativo = true;
 
+    @Enumerated(EnumType.STRING)
+    private CategoriaCurso categoria;
 
 
-    public Curso(String nome, String descricao, Integer cargaHoraria, Boolean ativo) {
+
+    public Curso(String nome, String descricao, Integer cargaHoraria, Boolean ativo, CategoriaCurso categoria) {
         this.nome = nome;
         this.descricao = descricao;
         this.cargaHoraria = cargaHoraria;
         this.ativo = ativo;
+        this.categoria = categoria;
     }
 
     public Curso() {
@@ -68,5 +70,13 @@ public class Curso {
 
     public void setAtivo(Boolean ativo) {
         this.ativo = ativo;
+    }
+
+    public CategoriaCurso getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(CategoriaCurso categoria) {
+        this.categoria = categoria;
     }
 }

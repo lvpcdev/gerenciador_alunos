@@ -1,6 +1,7 @@
 package br.com.lvpcdev.gerenciador.model;
 
 import br.com.lvpcdev.gerenciador.model.enums.DiaSemana;
+import br.com.lvpcdev.gerenciador.model.enums.ModalidadeContrato;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -19,9 +20,8 @@ public class Contrato {
     @JoinColumn(name = "aluno_id")
     private Aluno aluno;
 
-    @ManyToOne
-    @JoinColumn(name = "curso_id")
-    private Curso curso;
+    @Enumerated(EnumType.STRING)
+    private ModalidadeContrato modalidade;
 
     private LocalDate dataInicio;
     private Integer horasAulasMes;
@@ -35,9 +35,8 @@ public class Contrato {
     private List<DiaSemana> diasSemana = new ArrayList<>();
     private LocalDate dataCriacao;
 
-    public Contrato(Aluno aluno, Curso curso, LocalDate dataInicio, Integer horasAulasMes, Integer diaVencimento, LocalTime horaInicio, LocalTime horaTermino, List<DiaSemana> diasSemana, LocalDate dataCriacao) {
+    public Contrato(Aluno aluno, LocalDate dataInicio, Integer horasAulasMes, Integer diaVencimento, LocalTime horaInicio, LocalTime horaTermino, List<DiaSemana> diasSemana, LocalDate dataCriacao, ModalidadeContrato modalidade) {
         this.aluno = aluno;
-        this.curso = curso;
         this.dataInicio = dataInicio;
         this.horasAulasMes = horasAulasMes;
         this.diaVencimento = diaVencimento;
@@ -45,6 +44,7 @@ public class Contrato {
         this.horaTermino = horaTermino;
         this.diasSemana = diasSemana;
         this.dataCriacao = dataCriacao;
+        this.modalidade = modalidade;
     }
 
     public Contrato() {
@@ -64,14 +64,6 @@ public class Contrato {
 
     public void setAluno(Aluno aluno) {
         this.aluno = aluno;
-    }
-
-    public Curso getCurso() {
-        return curso;
-    }
-
-    public void setCurso(Curso curso) {
-        this.curso = curso;
     }
 
     public LocalDate getDataInicio() {
@@ -128,5 +120,13 @@ public class Contrato {
 
     public void setDataCriacao(LocalDate dataCriacao) {
         this.dataCriacao = dataCriacao;
+    }
+
+    public ModalidadeContrato getModalidade() {
+        return modalidade;
+    }
+
+    public void setModalidade(ModalidadeContrato modalidade) {
+        this.modalidade = modalidade;
     }
 }

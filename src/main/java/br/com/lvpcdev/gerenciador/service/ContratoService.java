@@ -3,10 +3,8 @@ package br.com.lvpcdev.gerenciador.service;
 import br.com.lvpcdev.gerenciador.dto.*;
 import br.com.lvpcdev.gerenciador.model.Aluno;
 import br.com.lvpcdev.gerenciador.model.Contrato;
-import br.com.lvpcdev.gerenciador.model.Curso;
 import br.com.lvpcdev.gerenciador.repository.AlunoRepository;
 import br.com.lvpcdev.gerenciador.repository.ContratoRepository;
-import br.com.lvpcdev.gerenciador.repository.CursoRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,23 +15,20 @@ public class ContratoService {
 
     private final ContratoRepository contratoRepository;
     private final AlunoRepository alunoRepository;
-    private final CursoRepository cursoRepository;
 
-    public ContratoService(ContratoRepository contratoRepository, AlunoRepository alunoRepository, CursoRepository cursoRepository) {
+    public ContratoService(ContratoRepository contratoRepository, AlunoRepository alunoRepository) {
         this.contratoRepository = contratoRepository;
         this.alunoRepository = alunoRepository;
-        this.cursoRepository = cursoRepository;
     }
 
     public ContratoResponseDTO criarContrato(ContratoRequestDTO dto) {
         Aluno aluno = alunoRepository.findById(dto.alunoId())
                 .orElseThrow(() -> new IllegalArgumentException("Aluno não encontrado"));
-        Curso curso = cursoRepository.findById(dto.cursoId())
-                .orElseThrow(() -> new IllegalArgumentException("Curso não encontrado"));
+
 
         Contrato contrato = new Contrato();
         contrato.setAluno(aluno);
-        contrato.setCurso(curso);
+        contrato.setModalidade(dto.modalidade());
         contrato.setDataInicio(dto.dataInicio());
         contrato.setHorasAulasMes(dto.horasAulasMes());
         contrato.setDiaVencimento(dto.diaVencimento());
@@ -60,7 +55,7 @@ public class ContratoService {
         return new ContratoResponseDTO(
                 contrato.getId(),
                 new AlunoResumoDTO(contrato.getAluno().getId(), contrato.getAluno().getNome()),
-                new CursoResumoDTO(contrato.getCurso().getId(), contrato.getCurso().getNome()),
+                contrato.getModalidade(),
                 contrato.getDataInicio(),
                 contrato.getHorasAulasMes(),
                 contrato.getDiaVencimento(),

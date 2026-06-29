@@ -1,6 +1,7 @@
 package br.com.lvpcdev.gerenciador.dto;
 
 import br.com.lvpcdev.gerenciador.model.enums.DiaSemana;
+import br.com.lvpcdev.gerenciador.model.enums.ModalidadeContrato;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
@@ -11,8 +12,8 @@ public record ContratoRequestDTO(
         @NotNull(message = "O ID do aluno é obrigatório.")
         Long alunoId,
 
-        @NotNull(message = "O ID do curso é obrigatório.")
-        Long cursoId,
+        @NotNull(message = "A modalidade do contrato é obrigatória.")
+        ModalidadeContrato modalidade,
 
         @NotNull(message = "A data de inicio é obrigatória")
         LocalDate dataInicio,

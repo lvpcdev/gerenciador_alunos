@@ -24,6 +24,7 @@ public class CursoService {
         curso.setNome(dto.nome());
         curso.setDescricao(dto.descricao());
         curso.setCargaHoraria(dto.cargaHoraria());
+        curso.setCategoria(dto.categoria());
 
         return toDTO(cursoRepository.save(curso));
     }
@@ -44,6 +45,7 @@ public class CursoService {
         cursoExistente.setNome(dto.nome());
         cursoExistente.setDescricao(dto.descricao());
         cursoExistente.setCargaHoraria(dto.cargaHoraria());
+        cursoExistente.setCategoria(dto.categoria());
 
         return toDTO(cursoRepository.save(cursoExistente));
     }
@@ -71,7 +73,8 @@ public class CursoService {
                 curso.getNome(),
                 curso.getDescricao(),
                 curso.getCargaHoraria(),
-                curso.getAtivo()
+                curso.getAtivo(),
+                curso.getCategoria()
         );
 
     }
