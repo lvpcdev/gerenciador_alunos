@@ -117,7 +117,7 @@ public class RelatorioService {
                 } else {
                     totalReporMin += minutos;
                 }
-                tabela.addCell(r.getDataAula().toString());
+                tabela.addCell(r.getDataAula().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
                 tabela.addCell(r.getCurso().getNome());
                 tabela.addCell(r.getHoraInicio().toString());
                 tabela.addCell(r.getHoraTermino().toString());
