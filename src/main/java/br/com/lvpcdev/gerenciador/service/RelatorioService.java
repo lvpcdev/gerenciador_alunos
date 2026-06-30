@@ -169,7 +169,7 @@ public class RelatorioService {
             marcadores.put("{{HORA_INICIO}}", contrato.getHoraInicio().toString());
             marcadores.put("{{HORA_TERMINO}}", contrato.getHoraTermino().toString());
             marcadores.put("{{DIAS_SEMANA}}", diasSemana);
-            marcadores.put("{{MODALIDADE}}", contrato.getModalidade().toString());
+            marcadores.put("{{CURSO}}", contrato.getModalidade().toString());
             marcadores.put("{{DATA_CRIACAO}}", contrato.getDataCriacao().format(java.time.format.DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy", new java.util.Locale("pt", "BR"))));
 
 
