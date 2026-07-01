@@ -27,13 +27,13 @@ public class PessoaController {
     }
 
     @GetMapping("/ativos")
-    public List<PessoaResponseDTO> listarAtivos() {
-        return pessoaService.listarAtivos();
+    public List<PessoaResponseDTO> listarAtivos(@RequestParam(defaultValue = "id") String ordenacao) {
+        return pessoaService.listarAtivos(ordenacao);
     }
 
     @GetMapping("/inativos")
-    public List<PessoaResponseDTO> listarInativos() {
-        return pessoaService.listarInativos();
+    public List<PessoaResponseDTO> listarInativos(@RequestParam(defaultValue = "id") String ordenacao) {
+        return pessoaService.listarInativos(ordenacao);
     }
 
 

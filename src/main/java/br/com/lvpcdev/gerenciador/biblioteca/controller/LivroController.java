@@ -25,13 +25,13 @@ public class LivroController {
     }
 
     @GetMapping("/ativos")
-    public List<LivroResponseDTO> listarAtivos() {
-        return livroService.listarAtivos();
+    public List<LivroResponseDTO> listarAtivos(@RequestParam(defaultValue = "id") String ordenacao) {
+        return livroService.listarAtivos(ordenacao);
     }
 
     @GetMapping("/inativos")
-    public List<LivroResponseDTO> listarInativos() {
-        return livroService.listarInativos();
+    public List<LivroResponseDTO> listarInativos(@RequestParam(defaultValue = "id") String ordenacao) {
+        return livroService.listarInativos(ordenacao);
     }
 
 

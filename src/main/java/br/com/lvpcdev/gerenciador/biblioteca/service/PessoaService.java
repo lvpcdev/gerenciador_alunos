@@ -4,6 +4,7 @@ import br.com.lvpcdev.gerenciador.biblioteca.dto.PessoaRequestDTO;
 import br.com.lvpcdev.gerenciador.biblioteca.dto.PessoaResponseDTO;
 import br.com.lvpcdev.gerenciador.biblioteca.model.Pessoa;
 import br.com.lvpcdev.gerenciador.biblioteca.repository.PessoaRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,12 +29,21 @@ public class PessoaService {
         return toDTO(pessoaRepository.save(pessoa));
     }
 
-    public List<PessoaResponseDTO> listarAtivos() {
-        return pessoaRepository.findAllByAtivoTrue().stream().map(this::toDTO).toList();
+    private Sort resolverOrdenacao(String ordenacao) {
+        return switch (ordenacao) {
+            case "nome" -> Sort.by(Sort.Direction.ASC, "nome");
+            default -> Sort.by(Sort.Direction.ASC, "id");
+        };
     }
 
-    public List<PessoaResponseDTO> listarInativos() {
-        return pessoaRepository.findAllByAtivoFalse().stream().map(this::toDTO).toList();
+    public List<PessoaResponseDTO> listarAtivos(String ordenacao) {
+        return pessoaRepository.findAllByAtivoTrue(resolverOrdenacao(ordenacao))
+                .stream().map(this::toDTO).toList();
+    }
+
+    public List<PessoaResponseDTO> listarInativos(String ordenacao) {
+        return pessoaRepository.findAllByAtivoFalse(resolverOrdenacao(ordenacao))
+                .stream().map(this::toDTO).toList();
     }
 
     public PessoaResponseDTO atualizarPessoa(Long id, PessoaRequestDTO dto) {

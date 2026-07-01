@@ -5,6 +5,7 @@ import br.com.lvpcdev.gerenciador.biblioteca.dto.LivroRequestDTO;
 import br.com.lvpcdev.gerenciador.biblioteca.dto.LivroResponseDTO;
 import br.com.lvpcdev.gerenciador.biblioteca.model.Livro;
 import br.com.lvpcdev.gerenciador.biblioteca.repository.LivroRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,14 +30,22 @@ public class LivroService {
         return toDTO(livroRepository.save(livro));
     }
 
-    public List<LivroResponseDTO> listarAtivos() {
-        return livroRepository.findAllByAtivoTrue().stream().map(this::toDTO).toList();
+    private Sort resolverOrdenacao(String ordenacao) {
+        return switch (ordenacao) {
+            case "titulo" -> Sort.by(Sort.Direction.ASC, "titulo");
+            default -> Sort.by(Sort.Direction.ASC, "id");
+        };
     }
 
-    public List<LivroResponseDTO> listarInativos() {
-        return livroRepository.findAllByAtivoFalse().stream().map(this::toDTO).toList();
+    public List<LivroResponseDTO> listarAtivos(String ordenacao) {
+        return livroRepository.findAllByAtivoTrue(resolverOrdenacao(ordenacao))
+                .stream().map(this::toDTO).toList();
     }
 
+    public List<LivroResponseDTO> listarInativos(String ordenacao) {
+        return livroRepository.findAllByAtivoFalse(resolverOrdenacao(ordenacao))
+                .stream().map(this::toDTO).toList();
+    }
     public LivroResponseDTO atualizarLivro(Long id, LivroRequestDTO dto) {
         Livro livroExistente = livroRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Livro não encontrado para a edição."));
