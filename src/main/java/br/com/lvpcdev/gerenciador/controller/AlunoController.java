@@ -26,13 +26,13 @@ public class AlunoController {
     }
 
     @GetMapping("/ativos")
-    public List<AlunoResponseDTO> listarAtivos() {
-        return alunoService.listarAtivos();
+    public List<AlunoResponseDTO> listarAtivos(@RequestParam(defaultValue = "id") String ordenacao) {
+        return alunoService.listarAtivos(ordenacao);
     }
 
     @GetMapping("/inativos")
-    public List<AlunoResponseDTO> listarInativos() {
-        return alunoService.listarInativos();
+    public List<AlunoResponseDTO> listarInativos(@RequestParam(defaultValue = "id") String ordenacao) {
+        return alunoService.listarInativos(ordenacao);
     }
 
 

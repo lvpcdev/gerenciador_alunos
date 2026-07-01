@@ -4,6 +4,7 @@ import br.com.lvpcdev.gerenciador.dto.CursoRequestDTO;
 import br.com.lvpcdev.gerenciador.dto.CursoResponseDTO;
 import br.com.lvpcdev.gerenciador.model.Curso;
 import br.com.lvpcdev.gerenciador.repository.CursoRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,12 +30,21 @@ public class CursoService {
         return toDTO(cursoRepository.save(curso));
     }
 
-    public List<CursoResponseDTO> listarAtivos() {
-        return cursoRepository.findAllByAtivoTrue().stream().map(this::toDTO).toList();
+    private Sort resolverOrdenacao(String ordenacao) {
+        return switch (ordenacao) {
+            case "nome" -> Sort.by(Sort.Direction.ASC, "nome");
+            default -> Sort.by(Sort.Direction.ASC, "id");
+        };
     }
 
-    public List<CursoResponseDTO> listarInativos() {
-        return cursoRepository.findAllByAtivoFalse().stream().map(this::toDTO).toList();
+    public List<CursoResponseDTO> listarAtivos(String ordenacao) {
+        return cursoRepository.findAllByAtivoTrue(resolverOrdenacao(ordenacao))
+                .stream().map(this::toDTO).toList();
+    }
+
+    public List<CursoResponseDTO> listarInativos(String ordenacao) {
+        return cursoRepository.findAllByAtivoFalse(resolverOrdenacao(ordenacao))
+                .stream().map(this::toDTO).toList();
     }
 
     public CursoResponseDTO atualizarCurso(Long id, CursoRequestDTO dto) {
