@@ -12,4 +12,6 @@ public interface RegistroAulaRepository extends JpaRepository<RegistroAula, Long
     List<RegistroAula> findByAlunoId(Long alunoId);
 
     List<RegistroAula> findByAlunoIdAndDataAulaBetween(Long alunoId, LocalDate inicio, LocalDate fim);
+
+    List<RegistroAula> findByDataAulaOrderByHoraInicioAsc(LocalDate dataAula);
 }

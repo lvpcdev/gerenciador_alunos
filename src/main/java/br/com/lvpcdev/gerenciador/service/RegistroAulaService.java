@@ -12,6 +12,7 @@ import br.com.lvpcdev.gerenciador.repository.CursoRepository;
 import br.com.lvpcdev.gerenciador.repository.RegistroAulaRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -47,8 +48,10 @@ public class RegistroAulaService {
         return toDTO(registroAulaRepository.save(registro));
     }
 
-    public List<RegistroAulaResponseDTO> listarTodos() {
-        return registroAulaRepository.findAll().stream().map(this::toDTO).toList();
+
+    public List<RegistroAulaResponseDTO> listarPorData(LocalDate data) {
+        return registroAulaRepository.findByDataAulaOrderByHoraInicioAsc(data)
+                .stream().map(this::toDTO).toList();
     }
 
     public RegistroAulaResponseDTO atualizarRegistro(Long id, RegistroAulaRequestDTO dto) {

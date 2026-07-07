@@ -6,9 +6,11 @@ import br.com.lvpcdev.gerenciador.dto.RegistroAulaResponseDTO;
 
 import br.com.lvpcdev.gerenciador.service.RegistroAulaService;
 import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -27,8 +29,9 @@ public class RegistroAulaController {
     }
 
     @GetMapping
-    public List<RegistroAulaResponseDTO> listarRegistros() {
-        return registroAulaService.listarTodos();
+    public List<RegistroAulaResponseDTO> listarRegistros(@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate data) {
+        LocalDate dataConsulta = data != null ? data : LocalDate.now();
+        return registroAulaService.listarPorData(dataConsulta);
     }
 
     @PutMapping("/{id}")
