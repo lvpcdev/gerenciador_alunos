@@ -262,7 +262,7 @@ public class RelatorioService {
             List<Curso> cursosMarcados;
 
             switch (contrato.getModalidade()) {
-                case CURSOS_BASICOS, CURSO_BASICO_30_DIAS ->
+                case CURSOS_BASICOS, CURSOS_BASICOS_30_DIAS ->
                         cursosMarcados = cursoRepository.findAllByCategoria(CategoriaCurso.BASICO);
                 case CURSOS_INTERMEDIARIOS ->
                         cursosMarcados = cursoRepository.findAllByCategoria(CategoriaCurso.AVANCADO);
