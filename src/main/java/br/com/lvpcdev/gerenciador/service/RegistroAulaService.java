@@ -10,6 +10,7 @@ import br.com.lvpcdev.gerenciador.model.RegistroAula;
 import br.com.lvpcdev.gerenciador.repository.AlunoRepository;
 import br.com.lvpcdev.gerenciador.repository.CursoRepository;
 import br.com.lvpcdev.gerenciador.repository.RegistroAulaRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -49,7 +50,7 @@ public class RegistroAulaService {
     }
 
     public List<RegistroAulaResponseDTO> listarTodos() {
-        return registroAulaRepository.findAll().stream().map(this::toDTO).toList();
+        return registroAulaRepository.findAll(Sort.by(Sort.Direction.DESC, "dataAula")).stream().map(this::toDTO).toList();
     }
 
 
