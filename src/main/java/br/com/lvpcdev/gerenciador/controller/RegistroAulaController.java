@@ -29,7 +29,12 @@ public class RegistroAulaController {
     }
 
     @GetMapping
-    public List<RegistroAulaResponseDTO> listarRegistros(@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate data) {
+    public List<RegistroAulaResponseDTO> listarRegistros() {
+        return registroAulaService.listarTodos();
+    }
+
+    @GetMapping
+    public List<RegistroAulaResponseDTO> listarRegistrosPorData(@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate data) {
         LocalDate dataConsulta = data != null ? data : LocalDate.now();
         return registroAulaService.listarPorData(dataConsulta);
     }

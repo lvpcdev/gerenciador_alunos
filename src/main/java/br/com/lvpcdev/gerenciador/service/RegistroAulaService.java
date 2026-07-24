@@ -48,6 +48,10 @@ public class RegistroAulaService {
         return toDTO(registroAulaRepository.save(registro));
     }
 
+    public List<RegistroAulaResponseDTO> listarTodos() {
+        return registroAulaRepository.findAll().stream().map(this::toDTO).toList();
+    }
+
 
     public List<RegistroAulaResponseDTO> listarPorData(LocalDate data) {
         return registroAulaRepository.findByDataAulaOrderByHoraInicioAsc(data)
