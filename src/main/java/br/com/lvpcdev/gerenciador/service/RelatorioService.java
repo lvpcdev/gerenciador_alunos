@@ -194,21 +194,65 @@ public class RelatorioService {
             document.close();
 
             java.io.File tempDir = tempDocx.getParentFile();
+
+            java.io.File loProfile = java.nio.file.Files.createTempDirectory("loprofile_").toFile();
+
             ProcessBuilder pb = new ProcessBuilder(
-                    "libreoffice", "--headless", "--convert-to", "pdf",
+                    "libreoffice", "--headless", "--norestore",
+                    "-env:UserInstallation=file://" + loProfile.getAbsolutePath(),
+                    "--convert-to", "pdf",
                     "--outdir", tempDir.getAbsolutePath(),
                     tempDocx.getAbsolutePath()
             );
             pb.redirectErrorStream(true);
             Process process = pb.start();
-            process.waitFor();
+
+            StringBuilder saidaProcesso = new StringBuilder();
+            Thread leituraSaida = new Thread(() -> {
+                try (java.io.BufferedReader reader = new java.io.BufferedReader(
+                        new java.io.InputStreamReader(process.getInputStream()))) {
+                    String linha;
+                    while ((linha = reader.readLine()) != null) {
+                        saidaProcesso.append(linha).append(System.lineSeparator());
+                    }
+                } catch (java.io.IOException ignored) {
+                }
+            });
+            leituraSaida.start();
+
+
+            boolean finalizouATempo = process.waitFor(60, java.util.concurrent.TimeUnit.SECONDS);
+            if (!finalizouATempo) {
+                process.destroyForcibly();
+                deleteDiretorioRecursivo(loProfile);
+                throw new RuntimeException(
+                        "Timeout ao converter contrato para PDF: o LibreOffice não respondeu em 60s. " +
+                                "Provável processo soffice travado no servidor. Saída: " + saidaProcesso);
+            }
+
+            leituraSaida.join(2000);
+
+            if (process.exitValue() != 0) {
+                deleteDiretorioRecursivo(loProfile);
+                throw new RuntimeException(
+                        "LibreOffice retornou erro (código " + process.exitValue() + ") ao converter o contrato. " +
+                                "Saída: " + saidaProcesso);
+            }
 
             String pdfPath = tempDocx.getAbsolutePath().replace(".docx", ".pdf");
             java.io.File pdfFile = new java.io.File(pdfPath);
+
+            if (!pdfFile.exists()) {
+                deleteDiretorioRecursivo(loProfile);
+                throw new RuntimeException(
+                        "PDF do contrato não foi gerado pelo LibreOffice. Saída: " + saidaProcesso);
+            }
+
             byte[] pdfBytes = java.nio.file.Files.readAllBytes(pdfFile.toPath());
 
             tempDocx.delete();
             pdfFile.delete();
+            deleteDiretorioRecursivo(loProfile);
 
             return pdfBytes;
 
@@ -310,6 +354,22 @@ public class RelatorioService {
                 }
                 run.setText(text, 0);
             }
+        }
+    }
+
+    private void deleteDiretorioRecursivo(java.io.File diretorio) {
+        try {
+            if (diretorio == null || !diretorio.exists()) return;
+            java.nio.file.Path path = diretorio.toPath();
+            java.nio.file.Files.walk(path)
+                    .sorted(Comparator.reverseOrder())
+                    .forEach(p -> {
+                        try {
+                            java.nio.file.Files.deleteIfExists(p);
+                        } catch (java.io.IOException ignored) {
+                        }
+                    });
+        } catch (java.io.IOException ignored) {
         }
     }
 
