@@ -20,8 +20,10 @@ public record AlunoRequestDTO(
         @Email(message = "O formato do e-mail é inválido.")
         String email,
 
-        @NotBlank(message = "O telefone é obrigatório.")
+
         String telefone,
+
+        String telefoneResponsavel,
 
         @NotNull(message = "A data de nascimento é obrigatória.")
         @Past(message = "A data de nascimento deve ser uma data no passado.")

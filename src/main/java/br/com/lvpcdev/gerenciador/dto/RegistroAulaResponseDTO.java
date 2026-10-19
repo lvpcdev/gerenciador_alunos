@@ -14,7 +14,7 @@ public record RegistroAulaResponseDTO(
         LocalTime horaTermino,
         String exercicio,
         String tipoAula,
-        Integer numeroMaquina,
+        String numeroMaquina,
         PresencaStatus presencaStatus
 ) {
 }

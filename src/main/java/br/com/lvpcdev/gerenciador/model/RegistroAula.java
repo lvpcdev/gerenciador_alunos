@@ -26,12 +26,12 @@ public class RegistroAula {
     private LocalTime horaTermino;
     private String exercicio;
     private String tipoAula;
-    private Integer numeroMaquina;
+    private String numeroMaquina;
 
     @Enumerated(EnumType.STRING)
     private PresencaStatus presencaStatus;
 
-    public RegistroAula(Aluno aluno, Curso curso, LocalDate dataAula, LocalTime horaInicio, LocalTime horaTermino, String exercicio, String tipoAula, Integer numeroMaquina, PresencaStatus presencaStatus) {
+    public RegistroAula(Aluno aluno, Curso curso, LocalDate dataAula, LocalTime horaInicio, LocalTime horaTermino, String exercicio, String tipoAula, String numeroMaquina, PresencaStatus presencaStatus) {
         this.aluno = aluno;
         this.curso = curso;
         this.dataAula = dataAula;
@@ -109,11 +109,11 @@ public class RegistroAula {
         this.tipoAula = tipoAula;
     }
 
-    public Integer getNumeroMaquina() {
+    public String getNumeroMaquina() {
         return numeroMaquina;
     }
 
-    public void setNumeroMaquina(Integer numeroMaquina) {
+    public void setNumeroMaquina(String numeroMaquina) {
         this.numeroMaquina = numeroMaquina;
     }
 

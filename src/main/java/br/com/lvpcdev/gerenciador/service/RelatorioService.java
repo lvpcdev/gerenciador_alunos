@@ -161,6 +161,7 @@ public class RelatorioService {
             marcadores.put("{{RG}}", aluno.getRg() != null ? aluno.getRg() : "---");
             marcadores.put("{{ENDERECO}}", aluno.getEndereco());
             marcadores.put("{{TELEFONE}}", aluno.getTelefone() != null ? aluno.getTelefone() : "---");
+            marcadores.put("{{TELEFONE_RESPONSAVEL}}", aluno.getTelefoneResponsavel() != null ? aluno.getTelefoneResponsavel() : "---");
             marcadores.put("{{RESPONSAVEL_LEGAL}}", aluno.getResponsavelLegal() != null ? aluno.getResponsavelLegal() : "---");
             marcadores.put("{{DATA_NASCIMENTO}}", aluno.getDataNascimento()     != null ? aluno.getDataNascimento().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "---");
             marcadores.put("{{DATA_INICIO}}", contrato.getDataInicio().format(java.time.format.DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy", new java.util.Locale("pt", "BR"))));

@@ -9,6 +9,7 @@ public record AlunoResponseDTO(
         String rg,
         String email,
         String telefone,
+        String telefoneResponsavel,
         LocalDate dataNascimento,
         String responsavelLegal,
         String endereco,

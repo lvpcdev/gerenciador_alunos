@@ -17,6 +17,7 @@ public class Aluno {
     private String cpf;
     private String email;
     private String telefone;
+    private String telefoneResponsavel;
     private LocalDate dataNascimento;
     private String responsavelLegal;
     private String rg;
@@ -118,5 +119,13 @@ public class Aluno {
 
     public void setEndereco(String endereco) {
         this.endereco = endereco;
+    }
+
+    public String getTelefoneResponsavel() {
+        return telefoneResponsavel;
+    }
+
+    public void setTelefoneResponsavel(String telefoneResponsavel) {
+        this.telefoneResponsavel = telefoneResponsavel;
     }
 }

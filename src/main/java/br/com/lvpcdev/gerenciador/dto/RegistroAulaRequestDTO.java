@@ -30,9 +30,8 @@ public record RegistroAulaRequestDTO(
 
         String tipoAula,
 
-        @NotNull(message = "O númeor da máquina é obrigatório.")
-        @Positive(message = "O número da máquina deve ser maior que zero.")
-        Integer numeroMaquina,
+        @NotBlank(message = "O númeor da máquina é obrigatório.")
+        String numeroMaquina,
 
         @NotNull(message = "O status de presença é obrigatório.")
         PresencaStatus presencaStatus

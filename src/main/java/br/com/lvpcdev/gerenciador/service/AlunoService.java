@@ -24,6 +24,7 @@ public class AlunoService {
         aluno.setCpf(dto.cpf());
         aluno.setEmail(dto.email());
         aluno.setTelefone(dto.telefone());
+        aluno.setTelefoneResponsavel(dto.telefoneResponsavel());
         aluno.setDataNascimento(dto.dataNascimento());
         aluno.setRg(dto.rg());
         aluno.setResponsavelLegal(dto.responsavelLegal());
@@ -58,6 +59,7 @@ public class AlunoService {
         alunoExistente.setCpf(dto.cpf());
         alunoExistente.setEmail(dto.email());
         alunoExistente.setTelefone(dto.telefone());
+        alunoExistente.setTelefoneResponsavel(dto.telefoneResponsavel());
         alunoExistente.setDataNascimento(dto.dataNascimento());
         alunoExistente.setRg(dto.rg());
         alunoExistente.setResponsavelLegal(dto.responsavelLegal());
@@ -92,6 +94,7 @@ public class AlunoService {
                 aluno.getRg(),
                 aluno.getEmail(),
                 aluno.getTelefone(),
+                aluno.getTelefoneResponsavel(),
                 aluno.getDataNascimento(),
                 aluno.getResponsavelLegal(),
                 aluno.getEndereco(),
